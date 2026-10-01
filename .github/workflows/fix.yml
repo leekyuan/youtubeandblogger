@@ -1,0 +1,30 @@
+name: 1회용 폴더 정리
+
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 파일을 폴더로 정리
+        run: |
+          mkdir -p rsi_daily tests state docs/posts assets
+          for f in __init__ __main__ blog charts config data demo fmt indicators names publish scan script tts video; do
+            if [ -f "$f.py" ]; then git mv "$f.py" "rsi_daily/$f.py"; fi
+          done
+          for f in test_data_mock test_indicators; do
+            if [ -f "$f.py" ]; then git mv "$f.py" "tests/$f.py"; fi
+          done
+          if [ -f history.json ]; then git mv history.json state/history.json; fi
+          git rm -q --ignore-unmatch crypto_universe.json daily.yml "download" "download (1)" "download (2)"
+          touch docs/posts/.gitkeep assets/.gitkeep
+          printf 'out/\n__pycache__/\n*.pyc\n' > .gitignore
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "폴더 구조 정리" && git push -q
+          python3 -m rsi_daily --help > /dev/null && echo "✅ 정리 완료: rsi_daily 모듈 인식됨"
