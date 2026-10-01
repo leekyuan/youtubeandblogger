@@ -1,0 +1,10 @@
+numpy>=1.26
+pandas>=2.1
+matplotlib>=3.8
+pillow>=10.0
+requests>=2.31
+yfinance>=0.2.60
+edge-tts>=7.0
+gTTS>=2.5
+google-api-python-client>=2.120
+google-auth>=2.28
